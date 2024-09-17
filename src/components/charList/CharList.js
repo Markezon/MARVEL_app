@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import PropTypes from "prop-types";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
@@ -8,21 +8,39 @@ import ErrorMessage from "../errorMessage/ErrorMessage";
 
 import "./charList.scss";
 
+const setContent = (process, Component, newItemLoading) => {
+  switch (process) {
+    case "waiting":
+      return <Spinner />;
+    case "loading":
+      return newItemLoading ? <Component /> : <Spinner />;
+    case "confirmed":
+      return <Component />;
+    case "error":
+      return <ErrorMessage />;
+    default:
+      throw new Error("Unexpected process state");
+  }
+};
+
 const CharList = (props) => {
   const [charList, setCharList] = useState([]);
   const [newItemLoading, setnewItemLoading] = useState(false);
   const [offset, setOffset] = useState(210);
   const [charEnded, setCharEnded] = useState(false);
 
-  const { loading, error, getAllCharacters } = useMarvelService();
+  const { getAllCharacters, process, setProcess } = useMarvelService();
 
   useEffect(() => {
     onRequest(offset, true);
+    // eslint-disable-next-line
   }, []);
 
   const onRequest = (offset, initial) => {
     initial ? setnewItemLoading(false) : setnewItemLoading(true);
-    getAllCharacters(offset).then(onCharListLoaded);
+    getAllCharacters(offset)
+      .then(onCharListLoaded)
+      .then(() => setProcess("confirmed"));
   };
 
   const onCharListLoaded = async (newCharList) => {
@@ -46,7 +64,7 @@ const CharList = (props) => {
     itemRefs.current[id].focus();
   };
 
-  function renderItems(arr) {
+  const renderItems = (arr) => {
     const items = arr.map((item, i) => {
       let imgStyle = { objectFit: "cover" };
       if (
@@ -85,18 +103,16 @@ const CharList = (props) => {
         <TransitionGroup component={null}>{items}</TransitionGroup>
       </ul>
     );
-  }
+  };
 
-  const items = renderItems(charList);
-
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loading && !newItemLoading ? <Spinner /> : null;
+  const elements = useMemo(() => {
+    return setContent(process, () => renderItems(charList), newItemLoading);
+    // eslint-disable-next-line
+  }, [process]);
 
   return (
     <div className="char__list">
-      {errorMessage}
-      {spinner}
-      {items}
+      {elements}
       <button
         disabled={newItemLoading}
         style={{ display: charEnded ? "none" : "block" }}
