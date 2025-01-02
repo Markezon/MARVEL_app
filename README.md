@@ -2,7 +2,7 @@
 
 Stack: React, JS, HTML, CSS
 
->The application was created as part of the course assignments for Ivan Petrychenko's "Full Course on JavaScript + React - From Zero to Result."
+>The application was created as part of the course assignments for Ivan Petrychenko's " JavaScript + React Full Course"
 
 ####  The application allows the user to:
 
