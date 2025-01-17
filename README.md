@@ -1,5 +1,7 @@
 # React application using API
 
+## The project can be viewed by following the [link](https://marvel.khudorenko.com/)
+
 Stack: React, JS, HTML, CSS
 
 >The application was created as part of the course assignments for Ivan Petrychenko's " JavaScript + React Full Course"
@@ -14,4 +16,4 @@ Stack: React, JS, HTML, CSS
 - Open a dedicated page for the selected comic.
 
 
-## The project can be viewed by following the [link](https://marvel.khudorenko.com/)
+
